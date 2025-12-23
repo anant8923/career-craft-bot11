@@ -1,56 +1,113 @@
-import { useState } from "react";
-import { Target, Save, ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Target, Save, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
-const skillCategories = {
+const defaultSkillCategories = {
   Technical: [
-    { name: "Python Programming", level: 7 },
-    { name: "JavaScript", level: 6 },
-    { name: "Data Analysis", level: 8 },
+    { name: "Python Programming", level: 5 },
+    { name: "JavaScript", level: 5 },
+    { name: "Data Analysis", level: 5 },
     { name: "Machine Learning", level: 5 },
-    { name: "SQL & Databases", level: 7 },
-    { name: "Cloud Computing", level: 4 },
+    { name: "SQL & Databases", level: 5 },
+    { name: "Cloud Computing", level: 5 },
   ],
   Soft: [
-    { name: "Communication", level: 9 },
-    { name: "Leadership", level: 6 },
-    { name: "Problem Solving", level: 8 },
-    { name: "Teamwork", level: 9 },
-    { name: "Time Management", level: 7 },
-    { name: "Adaptability", level: 8 },
+    { name: "Communication", level: 5 },
+    { name: "Leadership", level: 5 },
+    { name: "Problem Solving", level: 5 },
+    { name: "Teamwork", level: 5 },
+    { name: "Time Management", level: 5 },
+    { name: "Adaptability", level: 5 },
   ],
   Creative: [
-    { name: "Design Thinking", level: 6 },
-    { name: "Content Writing", level: 7 },
+    { name: "Design Thinking", level: 5 },
+    { name: "Content Writing", level: 5 },
     { name: "Visual Design", level: 5 },
-    { name: "Storytelling", level: 8 },
-    { name: "Innovation", level: 7 },
+    { name: "Storytelling", level: 5 },
+    { name: "Innovation", level: 5 },
   ],
   Business: [
-    { name: "Project Management", level: 6 },
+    { name: "Project Management", level: 5 },
     { name: "Strategic Planning", level: 5 },
-    { name: "Market Analysis", level: 4 },
+    { name: "Market Analysis", level: 5 },
     { name: "Financial Literacy", level: 5 },
-    { name: "Negotiation", level: 6 },
+    { name: "Negotiation", level: 5 },
   ],
 };
 
-type CategoryKey = keyof typeof skillCategories;
+type CategoryKey = keyof typeof defaultSkillCategories;
 
 export default function SkillAssessment() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>("Technical");
-  const [skills, setSkills] = useState(skillCategories);
-  const [expandedCategories, setExpandedCategories] = useState<CategoryKey[]>(["Technical"]);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [skills, setSkills] = useState(defaultSkillCategories);
+  const [expandedCategories, setExpandedCategories] = useState<CategoryKey[]>([
+    "Technical",
+  ]);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const updateSkill = (category: CategoryKey, skillName: string, newLevel: number) => {
+  useEffect(() => {
+    if (user) {
+      fetchUserSkills();
+    }
+  }, [user]);
+
+  const fetchUserSkills = async () => {
+    if (!user) return;
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase
+        .from("skills")
+        .select("*")
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        // Merge saved skills with defaults
+        const updatedSkills = { ...defaultSkillCategories };
+
+        data.forEach((skill) => {
+          const category = skill.category as CategoryKey;
+          if (category && updatedSkills[category]) {
+            const skillIndex = updatedSkills[category].findIndex(
+              (s) => s.name === skill.skill_name
+            );
+            if (skillIndex !== -1) {
+              updatedSkills[category][skillIndex].level = skill.rating || 5;
+            }
+          }
+        });
+
+        setSkills(updatedSkills);
+      }
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateSkill = (
+    category: CategoryKey,
+    skillName: string,
+    newLevel: number
+  ) => {
     setSkills((prev) => ({
       ...prev,
       [category]: prev[category].map((skill) =>
         skill.name === skillName ? { ...skill, level: newLevel } : skill
       ),
     }));
+    setHasChanges(true);
   };
 
   const toggleCategory = (category: CategoryKey) => {
@@ -69,12 +126,60 @@ export default function SkillAssessment() {
     );
   };
 
+  const handleSave = async () => {
+    if (!user) return;
+    setIsSaving(true);
+
+    try {
+      // Delete existing skills for this user
+      await supabase.from("skills").delete().eq("user_id", user.id);
+
+      // Insert all skills
+      const skillsToInsert = Object.entries(skills).flatMap(
+        ([category, categorySkills]) =>
+          categorySkills.map((skill) => ({
+            user_id: user.id,
+            category,
+            skill_name: skill.name,
+            rating: skill.level,
+          }))
+      );
+
+      const { error } = await supabase.from("skills").insert(skillsToInsert);
+
+      if (error) throw error;
+
+      setHasChanges(false);
+      toast({
+        title: "Skills saved",
+        description: "Your skill assessment has been saved successfully.",
+      });
+    } catch (error) {
+      console.error("Error saving skills:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save skills. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const categoryColors: Record<CategoryKey, string> = {
     Technical: "from-blue-500 to-cyan-500",
     Soft: "from-purple-500 to-pink-500",
     Creative: "from-orange-500 to-yellow-500",
     Business: "from-green-500 to-emerald-500",
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -101,18 +206,25 @@ export default function SkillAssessment() {
           <button
             key={category}
             onClick={() => {
-              setSelectedCategory(category);
               if (!expandedCategories.includes(category)) {
                 toggleCategory(category);
               }
             }}
             className={cn(
               "glass-card-hover p-4 text-left animate-slide-up opacity-0",
-              selectedCategory === category && "ring-2 ring-primary"
+              expandedCategories.includes(category) && "ring-2 ring-primary"
             )}
-            style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "forwards" }}
+            style={{
+              animationDelay: `${idx * 100}ms`,
+              animationFillMode: "forwards",
+            }}
           >
-            <div className={cn("h-2 w-full rounded-full bg-gradient-to-r mb-3", categoryColors[category])} />
+            <div
+              className={cn(
+                "h-2 w-full rounded-full bg-gradient-to-r mb-3",
+                categoryColors[category]
+              )}
+            />
             <h3 className="font-display font-semibold text-foreground">
               {category}
             </h3>
@@ -132,10 +244,7 @@ export default function SkillAssessment() {
       {/* Skill Details */}
       <div className="space-y-4">
         {(Object.keys(skills) as CategoryKey[]).map((category) => (
-          <div
-            key={category}
-            className="glass-card overflow-hidden animate-fade-in"
-          >
+          <div key={category} className="glass-card overflow-hidden animate-fade-in">
             <button
               onClick={() => toggleCategory(category)}
               className="w-full flex items-center justify-between p-6 hover:bg-muted/30 transition-colors"
@@ -154,7 +263,8 @@ export default function SkillAssessment() {
                     {category} Skills
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    {skills[category].length} skills · Average: {getCategoryAverage(category)}/10
+                    {skills[category].length} skills · Average:{" "}
+                    {getCategoryAverage(category)}/10
                   </p>
                 </div>
               </div>
@@ -202,9 +312,18 @@ export default function SkillAssessment() {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button variant="gradient" size="lg">
-          <Save className="h-5 w-5" />
-          Save Assessment
+        <Button
+          variant="gradient"
+          size="lg"
+          onClick={handleSave}
+          disabled={isSaving || !hasChanges}
+        >
+          {isSaving ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Save className="h-5 w-5" />
+          )}
+          {hasChanges ? "Save Assessment" : "No Changes"}
         </Button>
       </div>
     </div>
