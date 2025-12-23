@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface RequestBody {
-  query_type: 'basic' | 'detailed' | 'interview' | 'resume' | 'roadmap';
+  query_type: 'basic' | 'detailed' | 'interview' | 'resume' | 'roadmap' | 'salary_insights';
   profile_text: string;
   extra_context?: Record<string, unknown>;
 }
@@ -122,6 +122,39 @@ Respond ONLY with valid JSON:
   ],
   "estimatedTimeToGoal": "string",
   "keyInsights": "string"
+}`,
+
+    /**
+     * SALARY_INSIGHTS QUERY TYPE
+     * This prompt asks LLaMA to provide current salary data for a specific role and location.
+     * The model generates dynamic, realistic salary ranges based on market knowledge.
+     */
+    salary_insights: `You are an expert compensation analyst and career advisor. Based on the role and location provided, give accurate salary insights.
+
+Provide salary ranges for entry, mid, and senior levels in the appropriate local currency (INR for India, USD for USA, GBP for UK, EUR for Europe, etc.).
+
+For each level provide:
+- min: Minimum salary (number only, no formatting)
+- max: Maximum salary (number only, no formatting)
+- currency: The 3-letter currency code (USD, INR, GBP, EUR, etc.)
+
+Also provide:
+- tips: Array of 2-3 actionable suggestions to increase salary
+- notes: A short paragraph explaining factors that affect salary (skills, industry, company size, certifications)
+
+Consider factors like:
+- Local cost of living and market rates
+- Industry demand for the role
+- Required skills and certifications
+- Company size variations
+
+Respond ONLY with valid JSON:
+{
+  "entry": { "min": number, "max": number, "currency": "string" },
+  "mid": { "min": number, "max": number, "currency": "string" },
+  "senior": { "min": number, "max": number, "currency": "string" },
+  "tips": ["string", "string", "string"],
+  "notes": "string"
 }`
   };
 
