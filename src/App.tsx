@@ -16,32 +16,43 @@ import SavedCareers from "./pages/SavedCareers";
 import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 import { AppLayout } from "./components/layout/AppLayout";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/app" element={<AppLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="career-advice" element={<CareerAdvice />} />
-            <Route path="skill-assessment" element={<SkillAssessment />} />
-            <Route path="resume-builder" element={<ResumeBuilder />} />
-            <Route path="interview-prep" element={<InterviewPrep />} />
-            <Route path="career-roadmap" element={<CareerRoadmap />} />
-            <Route path="salary-insights" element={<SalaryInsights />} />
-            <Route path="saved-careers" element={<SavedCareers />} />
-            <Route path="subscription" element={<Subscription />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="career-advice" element={<CareerAdvice />} />
+              <Route path="skill-assessment" element={<SkillAssessment />} />
+              <Route path="resume-builder" element={<ResumeBuilder />} />
+              <Route path="interview-prep" element={<InterviewPrep />} />
+              <Route path="career-roadmap" element={<CareerRoadmap />} />
+              <Route path="salary-insights" element={<SalaryInsights />} />
+              <Route path="saved-careers" element={<SavedCareers />} />
+              <Route path="subscription" element={<Subscription />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

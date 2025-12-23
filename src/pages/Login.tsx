@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Sparkles, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Sparkles, Mail, Lock, ArrowRight, Loader2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { z } from "zod";
 
 const features = [
   "AI-powered career recommendations",
@@ -12,28 +15,153 @@ const features = [
   "Salary insights & trends",
 ];
 
+const emailSchema = z.string().email("Please enter a valid email address");
+const passwordSchema = z.string().min(6, "Password must be at least 6 characters");
+
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { signIn, signUp, user, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/app/dashboard";
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && !authLoading) {
+      navigate(from, { replace: true });
+    }
+  }, [user, authLoading, navigate, from]);
+
+  const validateInputs = () => {
+    try {
+      emailSchema.parse(email);
+    } catch {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    try {
+      passwordSchema.parse(password);
+    } catch {
+      toast({
+        title: "Invalid Password",
+        description: "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (isSignUp && !fullName.trim()) {
+      toast({
+        title: "Name Required",
+        description: "Please enter your full name",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateInputs()) return;
+    
     setIsLoading(true);
-    // Simulate login
-    setTimeout(() => {
+
+    try {
+      if (isSignUp) {
+        const { error } = await signUp(email, password, fullName);
+        if (error) {
+          if (error.message.includes("already registered")) {
+            toast({
+              title: "Account Exists",
+              description: "An account with this email already exists. Please sign in instead.",
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Sign Up Failed",
+              description: error.message,
+              variant: "destructive",
+            });
+          }
+        } else {
+          toast({
+            title: "Check Your Email",
+            description: "We've sent you a confirmation link. Please check your email to complete sign up.",
+          });
+        }
+      } else {
+        const { error } = await signIn(email, password);
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            toast({
+              title: "Invalid Credentials",
+              description: "The email or password you entered is incorrect.",
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Sign In Failed",
+              description: error.message,
+              variant: "destructive",
+            });
+          }
+        } else {
+          navigate(from, { replace: true });
+        }
+      }
+    } finally {
       setIsLoading(false);
-      navigate("/app/dashboard");
-    }, 1500);
+    }
   };
 
-  const handleDemoLogin = () => {
+  const handleDemoLogin = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/app/dashboard");
-    }, 1000);
+    // Demo credentials - in production you'd want to handle this differently
+    const demoEmail = "demo@careercraft.app";
+    const demoPassword = "demo123456";
+    
+    const { error } = await signIn(demoEmail, demoPassword);
+    if (error) {
+      // If demo account doesn't exist, create it
+      const { error: signUpError } = await signUp(demoEmail, demoPassword, "Demo User");
+      if (signUpError) {
+        toast({
+          title: "Demo Login Failed",
+          description: "Please create an account to get started.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Demo Account Created",
+          description: "Check your email to confirm the demo account, or create your own account.",
+        });
+      }
+    } else {
+      navigate(from, { replace: true });
+    }
+    setIsLoading(false);
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -120,7 +248,16 @@ export default function Login() {
                   <label className="text-sm font-medium text-foreground mb-2 block">
                     Full Name
                   </label>
-                  <Input placeholder="John Doe" />
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="John Doe"
+                      className="pl-11"
+                      disabled={isLoading}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -132,8 +269,11 @@ export default function Login() {
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     className="pl-11"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -146,8 +286,11 @@ export default function Login() {
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     className="pl-11"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -198,6 +341,7 @@ export default function Login() {
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-primary font-medium hover:underline"
+                disabled={isLoading}
               >
                 {isSignUp ? "Sign in" : "Sign up"}
               </button>

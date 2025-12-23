@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Compass,
@@ -11,8 +11,11 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/app/dashboard" },
@@ -28,6 +31,33 @@ const navItems = [
 
 export function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await signOut();
+    navigate("/login");
+  };
+
+  // Get user initials
+  const getInitials = () => {
+    const name = user?.user_metadata?.full_name || user?.email || "User";
+    if (name.includes("@")) {
+      return name.substring(0, 2).toUpperCase();
+    }
+    return name
+      .split(" ")
+      .map((n: string) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  const getDisplayName = () => {
+    return user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-border bg-sidebar">
@@ -69,14 +99,22 @@ export function Sidebar() {
         <div className="border-t border-border p-4">
           <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
             <div className="h-10 w-10 rounded-full bg-gradient-primary flex items-center justify-center">
-              <span className="text-sm font-semibold text-primary-foreground">JD</span>
+              <span className="text-sm font-semibold text-primary-foreground">{getInitials()}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">John Doe</p>
-              <span className="plan-badge-premium text-[10px]">Premium</span>
+              <p className="text-sm font-medium text-foreground truncate">{getDisplayName()}</p>
+              <span className="plan-badge-premium text-[10px]">Free</span>
             </div>
-            <button className="p-2 rounded-lg hover:bg-background transition-colors">
-              <LogOut className="h-4 w-4 text-muted-foreground" />
+            <button 
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="p-2 rounded-lg hover:bg-background transition-colors"
+            >
+              {isLoggingOut ? (
+                <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
+              ) : (
+                <LogOut className="h-4 w-4 text-muted-foreground" />
+              )}
             </button>
           </div>
         </div>
