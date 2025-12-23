@@ -1,1 +1,4 @@
 project_id = "jxcfgzfznrxtbnflqxhz"
+
+[functions.llama-chat]
+verify_jwt = false

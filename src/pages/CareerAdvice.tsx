@@ -7,11 +7,14 @@ import {
   Briefcase,
   Heart,
   Target,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CareerCard } from "@/components/careers/CareerCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const educationLevels = [
   "High School",
@@ -22,58 +25,104 @@ const educationLevels = [
   "Self-taught",
 ];
 
-const sampleCareers = [
-  {
-    title: "Data Scientist",
-    description:
-      "Analyze complex data sets to help organizations make data-driven decisions. Combine statistics, programming, and domain expertise.",
-    fitScore: 92,
-    resources: [
-      { label: "Coursera Course", url: "#" },
-      { label: "Career Guide", url: "#" },
-    ],
-  },
-  {
-    title: "Product Manager",
-    description:
-      "Lead product development from conception to launch. Bridge technical teams and business stakeholders to create user-centric products.",
-    fitScore: 85,
-    resources: [
-      { label: "PM Handbook", url: "#" },
-      { label: "Community", url: "#" },
-    ],
-  },
-  {
-    title: "UX Designer",
-    description:
-      "Create intuitive and engaging user experiences. Conduct research, design interfaces, and iterate based on user feedback.",
-    fitScore: 78,
-    resources: [
-      { label: "Design Course", url: "#" },
-      { label: "Portfolio Tips", url: "#" },
-    ],
-  },
-];
+interface Career {
+  title: string;
+  description: string;
+  fitScore: number;
+  resources: { label: string; url: string }[];
+}
 
 export default function CareerAdvice() {
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [careers, setCareers] = useState<Career[]>([]);
+  const [extraNotes, setExtraNotes] = useState("");
   const [formData, setFormData] = useState({
     education: "",
+    fieldOfStudy: "",
     skills: "",
     interests: "",
     goals: "",
-    additionalInfo: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+
+    const profileText = `
+Education: ${formData.education} in ${formData.fieldOfStudy || 'Not specified'}
+Skills: ${formData.skills || 'Not specified'}
+Interests: ${formData.interests || 'Not specified'}
+Career Goals: ${formData.goals || 'Not specified'}
+    `.trim();
+
+    try {
+      const { data, error } = await supabase.functions.invoke('llama-chat', {
+        body: { 
+          query_type: 'basic',
+          profile_text: profileText
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setCareers(data.careers || []);
+      setExtraNotes(data.extraNotes || '');
       setShowResults(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Error getting career advice:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to get career recommendations. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeepDive = async () => {
+    setIsLoading(true);
+
+    const profileText = `
+Education: ${formData.education} in ${formData.fieldOfStudy || 'Not specified'}
+Skills: ${formData.skills || 'Not specified'}
+Interests: ${formData.interests || 'Not specified'}
+Career Goals: ${formData.goals || 'Not specified'}
+    `.trim();
+
+    try {
+      const { data, error } = await supabase.functions.invoke('llama-chat', {
+        body: { 
+          query_type: 'detailed',
+          profile_text: profileText
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setCareers(data.careers || []);
+      setExtraNotes(data.extraNotes || data.industryTrends || '');
+      setShowResults(true);
+    } catch (error) {
+      console.error('Error getting detailed advice:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to get detailed analysis. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const [savedCareers, setSavedCareers] = useState<string[]>([]);
@@ -98,8 +147,12 @@ export default function CareerAdvice() {
             <h1 className="font-display text-3xl font-bold text-foreground">
               AI Career Guidance
             </h1>
-            <p className="text-muted-foreground">
-              Get personalized career recommendations powered by AI
+            <p className="text-muted-foreground flex items-center gap-2">
+              Get personalized career recommendations
+              <span className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                <Bot className="h-3 w-3" />
+                Powered by Meta LLaMA
+              </span>
             </p>
           </div>
         </div>
@@ -138,7 +191,11 @@ export default function CareerAdvice() {
               <label className="text-sm font-medium text-foreground mb-2 block">
                 Field of Study
               </label>
-              <Input placeholder="e.g., Computer Science, Business..." />
+              <Input 
+                placeholder="e.g., Computer Science, Business..." 
+                value={formData.fieldOfStudy}
+                onChange={(e) => setFormData({ ...formData, fieldOfStudy: e.target.value })}
+              />
             </div>
           </div>
         </div>
@@ -215,7 +272,13 @@ export default function CareerAdvice() {
               </>
             )}
           </Button>
-          <Button type="button" variant="outline" size="lg">
+          <Button 
+            type="button" 
+            variant="outline" 
+            size="lg"
+            onClick={handleDeepDive}
+            disabled={isLoading}
+          >
             <Send className="h-5 w-5" />
             Deep Dive Analysis
           </Button>
@@ -223,7 +286,7 @@ export default function CareerAdvice() {
       </form>
 
       {/* Results */}
-      {showResults && (
+      {showResults && careers.length > 0 && (
         <div className="space-y-6 animate-fade-in">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-xl font-semibold text-foreground">
@@ -233,8 +296,15 @@ export default function CareerAdvice() {
               Based on your profile
             </span>
           </div>
+          
+          {extraNotes && (
+            <div className="glass-card p-4 border-l-4 border-primary">
+              <p className="text-sm text-muted-foreground">{extraNotes}</p>
+            </div>
+          )}
+          
           <div className="space-y-4">
-            {sampleCareers.map((career) => (
+            {careers.map((career) => (
               <CareerCard
                 key={career.title}
                 {...career}
