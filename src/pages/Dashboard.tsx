@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { SkillProgress } from "@/components/dashboard/SkillProgress";
+import { ChatBot } from "@/components/dashboard/ChatBot";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -461,6 +462,9 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Chat Bot */}
+      <ChatBot />
     </div>
   );
 }
