@@ -13,11 +13,19 @@ import {
   Sparkles,
   Loader2,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/app/dashboard" },
@@ -34,9 +42,11 @@ const navItems = [
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
@@ -71,81 +81,179 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   };
 
   return (
-    <aside
-      className={cn(
-        "fixed left-0 top-0 z-50 h-screen w-64 border-r border-border bg-sidebar transition-transform duration-300 lg:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}
-    >
-      <div className="flex h-full flex-col">
-        {/* Logo */}
-        <div className="flex items-center justify-between border-b border-border px-4 py-4 lg:px-6 lg:py-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-xl bg-gradient-primary">
-              <Sparkles className="h-4 w-4 lg:h-5 lg:w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-display text-base lg:text-lg font-bold text-foreground">CareerCraft</h1>
-              <p className="text-[10px] lg:text-xs text-muted-foreground">Design Your Future</p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="h-8 w-8 lg:hidden"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3 lg:p-4">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={handleNavClick}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 lg:px-4 lg:py-3 text-sm font-medium transition-all duration-200",
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-soft"
-                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <item.icon className="h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
-                <span className="truncate">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User section */}
-        <div className="border-t border-border p-3 lg:p-4">
-          <div className="flex items-center gap-2 lg:gap-3 rounded-xl bg-muted/50 p-2.5 lg:p-3">
-            <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
-              <span className="text-xs lg:text-sm font-semibold text-primary-foreground">{getInitials()}</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs lg:text-sm font-medium text-foreground truncate">{getDisplayName()}</p>
-              <span className="plan-badge-premium text-[9px] lg:text-[10px]">Free</span>
-            </div>
-            <button 
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="p-1.5 lg:p-2 rounded-lg hover:bg-background transition-colors flex-shrink-0"
+    <TooltipProvider delayDuration={0}>
+      <aside
+        className={cn(
+          "fixed left-0 top-0 z-50 h-screen border-r border-border bg-sidebar transition-all duration-300",
+          // Desktop: collapsed or expanded
+          isCollapsed ? "lg:w-[72px]" : "lg:w-64",
+          // Mobile: slide in/out
+          isOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0"
+        )}
+      >
+        <div className="flex h-full flex-col">
+          {/* Logo */}
+          <div className={cn(
+            "flex items-center border-b border-border",
+            isCollapsed ? "lg:justify-center lg:px-2" : "justify-between px-4 lg:px-6",
+            "py-4 lg:py-5"
+          )}>
+            <button
+              onClick={onToggleCollapse}
+              className="hidden lg:flex items-center gap-3 hover:opacity-80 transition-opacity"
             >
-              {isLoggingOut ? (
-                <Loader2 className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-muted-foreground animate-spin" />
-              ) : (
-                <LogOut className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-muted-foreground" />
+              <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-xl bg-gradient-primary flex-shrink-0">
+                <Sparkles className="h-4 w-4 lg:h-5 lg:w-5 text-primary-foreground" />
+              </div>
+              {!isCollapsed && (
+                <div>
+                  <h1 className="font-display text-base lg:text-lg font-bold text-foreground">CareerCraft</h1>
+                  <p className="text-[10px] lg:text-xs text-muted-foreground">Design Your Future</p>
+                </div>
               )}
             </button>
+            {/* Mobile logo (not clickable) */}
+            <div className="flex lg:hidden items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-primary">
+                <Sparkles className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="font-display text-base font-bold text-foreground">CareerCraft</h1>
+                <p className="text-[10px] text-muted-foreground">Design Your Future</p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8 lg:hidden"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Collapse toggle indicator for desktop */}
+          {!isCollapsed && (
+            <button
+              onClick={onToggleCollapse}
+              className="hidden lg:flex absolute -right-3 top-20 h-6 w-6 items-center justify-center rounded-full border border-border bg-background shadow-sm hover:bg-muted transition-colors"
+            >
+              <ChevronLeft className="h-3 w-3 text-muted-foreground" />
+            </button>
+          )}
+          {isCollapsed && (
+            <button
+              onClick={onToggleCollapse}
+              className="hidden lg:flex absolute -right-3 top-20 h-6 w-6 items-center justify-center rounded-full border border-border bg-background shadow-sm hover:bg-muted transition-colors"
+            >
+              <ChevronRight className="h-3 w-3 text-muted-foreground" />
+            </button>
+          )}
+
+          {/* Navigation */}
+          <nav className={cn(
+            "flex-1 space-y-1 overflow-y-auto p-3 lg:p-4",
+            isCollapsed && "lg:p-2"
+          )}>
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              
+              const linkContent = (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={handleNavClick}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200",
+                    isCollapsed ? "lg:justify-center lg:px-0 lg:py-3" : "lg:px-4 lg:py-3",
+                    "px-3 py-2.5",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-soft"
+                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )}
+                >
+                  <item.icon className={cn(
+                    "flex-shrink-0",
+                    isCollapsed ? "h-5 w-5" : "h-4 w-4 lg:h-5 lg:w-5"
+                  )} />
+                  {!isCollapsed && <span className="truncate">{item.label}</span>}
+                  {isCollapsed && <span className="lg:hidden truncate">{item.label}</span>}
+                </Link>
+              );
+
+              if (isCollapsed) {
+                return (
+                  <Tooltip key={item.path}>
+                    <TooltipTrigger asChild className="hidden lg:flex">
+                      {linkContent}
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="hidden lg:block">
+                      {item.label}
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              }
+
+              return linkContent;
+            })}
+          </nav>
+
+          {/* User section */}
+          <div className={cn(
+            "border-t border-border p-3 lg:p-4",
+            isCollapsed && "lg:p-2"
+          )}>
+            {isCollapsed ? (
+              // Collapsed state - just show avatar
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="hidden lg:flex w-full justify-center rounded-xl bg-muted/50 p-2.5 hover:bg-muted transition-colors"
+                  >
+                    {isLoggingOut ? (
+                      <Loader2 className="h-5 w-5 text-muted-foreground animate-spin" />
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center">
+                        <span className="text-xs font-semibold text-primary-foreground">{getInitials()}</span>
+                      </div>
+                    )}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="hidden lg:block">
+                  {isLoggingOut ? "Logging out..." : `${getDisplayName()} (Click to logout)`}
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
+            
+            {/* Full user section - show on mobile always, desktop when expanded */}
+            <div className={cn(
+              "flex items-center gap-2 lg:gap-3 rounded-xl bg-muted/50 p-2.5 lg:p-3",
+              isCollapsed && "lg:hidden"
+            )}>
+              <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
+                <span className="text-xs lg:text-sm font-semibold text-primary-foreground">{getInitials()}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs lg:text-sm font-medium text-foreground truncate">{getDisplayName()}</p>
+                <span className="plan-badge-premium text-[9px] lg:text-[10px]">Free</span>
+              </div>
+              <button 
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="p-1.5 lg:p-2 rounded-lg hover:bg-background transition-colors flex-shrink-0"
+              >
+                {isLoggingOut ? (
+                  <Loader2 className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-muted-foreground animate-spin" />
+                ) : (
+                  <LogOut className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-muted-foreground" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </TooltipProvider>
   );
 }

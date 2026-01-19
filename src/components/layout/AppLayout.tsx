@@ -3,9 +3,11 @@ import { Sidebar } from "./Sidebar";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   return (
     <div className="min-h-screen bg-background">
@@ -30,9 +32,17 @@ export function AppLayout() {
         />
       )}
 
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)}
+        isCollapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+      />
       
-      <main className="lg:pl-64 pt-14 lg:pt-0">
+      <main className={cn(
+        "pt-14 lg:pt-0 transition-all duration-300",
+        sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-64"
+      )}>
         <div className="min-h-screen p-4 sm:p-6 lg:p-8">
           <Outlet />
         </div>
