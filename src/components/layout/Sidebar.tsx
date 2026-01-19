@@ -158,9 +158,8 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               
-              const linkContent = (
+              const linkElement = (
                 <Link
-                  key={item.path}
                   to={item.path}
                   onClick={handleNavClick}
                   className={cn(
@@ -176,25 +175,37 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
                     "flex-shrink-0",
                     isCollapsed ? "h-5 w-5" : "h-4 w-4 lg:h-5 lg:w-5"
                   )} />
-                  {!isCollapsed && <span className="truncate">{item.label}</span>}
-                  {isCollapsed && <span className="lg:hidden truncate">{item.label}</span>}
+                  {/* On mobile: always show label. On desktop: show based on collapse state */}
+                  <span className={cn("truncate", isCollapsed && "lg:hidden")}>
+                    {item.label}
+                  </span>
                 </Link>
               );
 
+              // Only use tooltips on desktop when collapsed
               if (isCollapsed) {
                 return (
-                  <Tooltip key={item.path}>
-                    <TooltipTrigger asChild className="hidden lg:flex">
-                      {linkContent}
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="hidden lg:block">
-                      {item.label}
-                    </TooltipContent>
-                  </Tooltip>
+                  <div key={item.path}>
+                    {/* Mobile: render link directly without tooltip */}
+                    <div className="lg:hidden">
+                      {linkElement}
+                    </div>
+                    {/* Desktop: render with tooltip */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="hidden lg:block">
+                          {linkElement}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        {item.label}
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 );
               }
 
-              return linkContent;
+              return <div key={item.path}>{linkElement}</div>;
             })}
           </nav>
 
