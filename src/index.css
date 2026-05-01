@@ -38,7 +38,8 @@
 
     /* Custom CareerCraft tokens */
     --gradient-primary: linear-gradient(135deg, hsl(245 75% 60%) 0%, hsl(280 60% 55%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(245 75% 60%) 0%, hsl(280 60% 55%) 50%, hsl(300 50% 50%) 100%);
+    --gradient-hero: linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%);
+    --gradient-hero-animated: linear-gradient(135deg, #4F46E5 0%, #7C3AED 25%, #9333EA 50%, #C026D3 75%, #EC4899 100%);
     --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.9) 0%, hsla(0 0% 100% / 0.7) 100%);
     --gradient-glass: linear-gradient(145deg, hsla(0 0% 100% / 0.25) 0%, hsla(0 0% 100% / 0.1) 100%);
     
@@ -148,11 +149,46 @@
     background: var(--gradient-hero);
   }
 
+  .gradient-hero-animated-bg {
+    background: var(--gradient-hero-animated);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+  }
+
   .gradient-text {
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .gradient-text-hero {
+    background: linear-gradient(90deg, #ffffff 0%, #FBCFE8 50%, #F9A8D4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .glow-orb {
+    @apply absolute rounded-full pointer-events-none;
+    filter: blur(80px);
+    opacity: 0.5;
+  }
+
+  .btn-glow {
+    @apply transition-all duration-300;
+  }
+
+  .btn-glow:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 40px rgba(236, 72, 153, 0.55), 0 0 80px rgba(147, 51, 234, 0.35);
   }
 
   .metric-card {
@@ -225,6 +261,14 @@
   .animation-delay-400 {
     animation-delay: 400ms;
   }
+
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .animate-bounce-slow {
+    animation: bounceSoft 2.5s ease-in-out infinite;
+  }
 }
 
 @keyframes float {
@@ -234,6 +278,16 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes bounceSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 }
 
 @keyframes fadeIn {
