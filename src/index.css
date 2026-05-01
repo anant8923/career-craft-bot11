@@ -38,7 +38,8 @@
 
     /* Custom CareerCraft tokens */
     --gradient-primary: linear-gradient(135deg, hsl(245 75% 60%) 0%, hsl(280 60% 55%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(245 75% 60%) 0%, hsl(280 60% 55%) 50%, hsl(300 50% 50%) 100%);
+    --gradient-hero: linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%);
+    --gradient-hero-animated: linear-gradient(135deg, #4F46E5 0%, #7C3AED 25%, #9333EA 50%, #C026D3 75%, #EC4899 100%);
     --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.9) 0%, hsla(0 0% 100% / 0.7) 100%);
     --gradient-glass: linear-gradient(145deg, hsla(0 0% 100% / 0.25) 0%, hsla(0 0% 100% / 0.1) 100%);
     
