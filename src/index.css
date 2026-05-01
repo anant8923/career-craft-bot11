@@ -261,7 +261,6 @@
   .animation-delay-400 {
     animation-delay: 400ms;
   }
-}
 
   .animate-float-slow {
     animation: float 8s ease-in-out infinite;
