@@ -96,7 +96,7 @@ export function ChatBot() {
           <p className="text-muted-foreground mb-4">
             Have questions about your career? Ask our AI assistant!
           </p>
-          <Button variant="gradient" onClick={() => setIsOpen(true)} className="gap-2">
+          <Button variant="gradient" onClick={() => setIsOpen(true)} className="gap-2 btn-glow">
             <MessageCircle className="h-4 w-4" />
             Start Chat
           </Button>
