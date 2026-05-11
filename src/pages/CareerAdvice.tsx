@@ -144,7 +144,7 @@ Career Goals: ${formData.goals || 'Not specified'}
             <Sparkles className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-display text-3xl font-bold text-foreground">
+            <h1 className="font-display text-3xl md:text-4xl font-bold gradient-text tracking-tight">
               AI Career Guidance
             </h1>
             <p className="text-muted-foreground flex items-center gap-2">

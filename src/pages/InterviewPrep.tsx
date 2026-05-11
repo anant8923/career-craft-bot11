@@ -103,7 +103,7 @@ Additional Context: ${formData.additionalContext || 'None'}
             <MessageSquare className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-display text-3xl font-bold text-foreground">
+            <h1 className="font-display text-3xl md:text-4xl font-bold gradient-text tracking-tight">
               Interview Preparation
             </h1>
             <p className="text-muted-foreground flex items-center gap-2">

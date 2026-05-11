@@ -75,7 +75,7 @@ export default function Subscription() {
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center animate-fade-in">
-        <h1 className="font-display text-3xl font-bold text-foreground">
+        <h1 className="font-display text-3xl md:text-4xl font-bold gradient-text tracking-tight">
           Choose Your Plan
         </h1>
         <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
@@ -89,7 +89,7 @@ export default function Subscription() {
           <div
             key={plan.name}
             className={cn(
-              "glass-card relative p-8 animate-slide-up opacity-0",
+              "glass-card-hover relative p-8 animate-slide-up opacity-0",
               plan.isPopular && "ring-2 ring-primary shadow-glow"
             )}
             style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "forwards" }}
@@ -170,7 +170,7 @@ export default function Subscription() {
       </div>
 
       {/* FAQ or Additional Info */}
-      <div className="glass-card p-8 text-center animate-fade-in">
+      <div className="glass-card-hover p-8 text-center animate-fade-in">
         <h3 className="font-display text-lg font-semibold text-foreground mb-2">
           Need a custom plan for your team?
         </h3>

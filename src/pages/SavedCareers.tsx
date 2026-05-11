@@ -117,7 +117,7 @@ export default function SavedCareers() {
             <Bookmark className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-display text-3xl font-bold text-foreground">
+            <h1 className="font-display text-3xl md:text-4xl font-bold gradient-text tracking-tight">
               Saved Careers
             </h1>
             <p className="text-muted-foreground">
