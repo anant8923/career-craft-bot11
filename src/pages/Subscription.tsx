@@ -89,7 +89,7 @@ export default function Subscription() {
           <div
             key={plan.name}
             className={cn(
-              "glass-card relative p-8 animate-slide-up opacity-0",
+              "glass-card-hover relative p-8 animate-slide-up opacity-0",
               plan.isPopular && "ring-2 ring-primary shadow-glow"
             )}
             style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "forwards" }}
@@ -170,7 +170,7 @@ export default function Subscription() {
       </div>
 
       {/* FAQ or Additional Info */}
-      <div className="glass-card p-8 text-center animate-fade-in">
+      <div className="glass-card-hover p-8 text-center animate-fade-in">
         <h3 className="font-display text-lg font-semibold text-foreground mb-2">
           Need a custom plan for your team?
         </h3>
