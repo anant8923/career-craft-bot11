@@ -75,7 +75,7 @@ export default function Subscription() {
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center animate-fade-in">
-        <h1 className="font-display text-3xl font-bold text-foreground">
+        <h1 className="font-display text-3xl md:text-4xl font-bold gradient-text tracking-tight">
           Choose Your Plan
         </h1>
         <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
