@@ -240,7 +240,7 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
             
             {/* Full user section - show on mobile always, desktop when expanded */}
             <div className={cn(
-              "flex items-center gap-2 lg:gap-3 rounded-xl bg-muted/50 p-2.5 lg:p-3",
+              "relative flex items-center gap-2 lg:gap-3 rounded-xl bg-card/60 backdrop-blur-md border border-border/60 p-2.5 lg:p-3 gradient-border overflow-hidden",
               isCollapsed && "lg:hidden"
             )}>
               <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
