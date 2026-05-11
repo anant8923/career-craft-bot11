@@ -326,7 +326,7 @@ export default function Dashboard() {
           style={{ animationFillMode: "forwards" }}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display text-lg font-semibold text-foreground">
+            <h2 className="font-display text-lg font-semibold gradient-text">
               Top Skills
             </h2>
             <Link to="/app/skill-assessment">
@@ -360,7 +360,7 @@ export default function Dashboard() {
           className="glass-card-hover p-6 animate-slide-up opacity-0 animation-delay-300"
           style={{ animationFillMode: "forwards" }}
         >
-          <h2 className="font-display text-lg font-semibold text-foreground mb-6">
+          <h2 className="font-display text-lg font-semibold gradient-text mb-6">
             Recent Activity
           </h2>
           {recentActivity.length > 0 ? (
@@ -401,7 +401,7 @@ export default function Dashboard() {
         style={{ animationFillMode: "forwards" }}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display text-lg font-semibold text-foreground">
+          <h2 className="font-display text-lg font-semibold gradient-text">
             Career Goals
           </h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
