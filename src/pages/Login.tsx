@@ -314,7 +314,7 @@ export default function Login() {
                   type="submit"
                   variant="gradient"
                   size="lg"
-                  className="w-full"
+                  className="w-full btn-glow"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -410,7 +410,7 @@ export default function Login() {
                     type="submit"
                     variant="gradient"
                     size="lg"
-                    className="w-full"
+                    className="w-full btn-glow"
                     disabled={isLoading}
                   >
                     {isLoading ? (
