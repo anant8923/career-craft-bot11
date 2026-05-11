@@ -268,11 +268,15 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative">
+      {/* Decorative orbs */}
+      <div className="glow-orb bg-primary/40 -top-20 -left-10 w-72 h-72 -z-10" />
+      <div className="glow-orb bg-secondary/30 top-40 right-0 w-80 h-80 -z-10" />
+
       {/* Header */}
-      <div className="animate-fade-in">
+      <div className="animate-fade-in relative">
         <h1 className="font-display text-3xl font-bold text-foreground">
-          Welcome back, {profileName}! 👋
+          Welcome back, <span className="gradient-text">{profileName}</span>! 👋
         </h1>
         <p className="mt-2 text-muted-foreground">
           Here's an overview of your career journey progress
@@ -318,11 +322,11 @@ export default function Dashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Skills overview */}
         <div
-          className="glass-card p-6 lg:col-span-2 animate-slide-up opacity-0 animation-delay-200"
+          className="glass-card-hover p-6 lg:col-span-2 animate-slide-up opacity-0 animation-delay-200"
           style={{ animationFillMode: "forwards" }}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display text-lg font-semibold text-foreground">
+            <h2 className="font-display text-lg font-semibold gradient-text">
               Top Skills
             </h2>
             <Link to="/app/skill-assessment">
@@ -353,10 +357,10 @@ export default function Dashboard() {
 
         {/* Recent activity */}
         <div
-          className="glass-card p-6 animate-slide-up opacity-0 animation-delay-300"
+          className="glass-card-hover p-6 animate-slide-up opacity-0 animation-delay-300"
           style={{ animationFillMode: "forwards" }}
         >
-          <h2 className="font-display text-lg font-semibold text-foreground mb-6">
+          <h2 className="font-display text-lg font-semibold gradient-text mb-6">
             Recent Activity
           </h2>
           {recentActivity.length > 0 ? (
@@ -393,11 +397,11 @@ export default function Dashboard() {
 
       {/* Goals section */}
       <div
-        className="glass-card p-6 animate-slide-up opacity-0 animation-delay-400"
+        className="glass-card-hover p-6 animate-slide-up opacity-0 animation-delay-400"
         style={{ animationFillMode: "forwards" }}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display text-lg font-semibold text-foreground">
+          <h2 className="font-display text-lg font-semibold gradient-text">
             Career Goals
           </h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -439,7 +443,7 @@ export default function Dashboard() {
             {goals.map((goal) => (
               <div
                 key={goal.id}
-                className="rounded-xl border border-border bg-muted/30 p-4 hover:border-primary/30 transition-colors cursor-pointer"
+                className="rounded-xl border border-border bg-muted/30 p-4 hover:border-primary/50 hover:shadow-soft hover:-translate-y-0.5 transition-all cursor-pointer"
                 onClick={() => handleCompleteGoal(goal.id)}
               >
                 <div className="flex items-start gap-3">

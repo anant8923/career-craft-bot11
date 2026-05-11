@@ -26,7 +26,7 @@ export function MetricCard({
   return (
     <div
       className={cn(
-        "metric-card animate-slide-up opacity-0",
+        "metric-card glass-card-hover animate-slide-up opacity-0 group",
         className
       )}
       style={{ animationDelay: `${delay}ms`, animationFillMode: "forwards" }}
@@ -34,7 +34,7 @@ export function MetricCard({
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="mt-2 text-3xl font-bold font-display text-foreground">{value}</p>
+          <p className="mt-2 text-3xl font-bold font-display gradient-text">{value}</p>
           {subtitle && (
             <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
           )}
@@ -52,8 +52,8 @@ export function MetricCard({
             </div>
           )}
         </div>
-        <div className="rounded-xl bg-primary/10 p-3">
-          <Icon className="h-6 w-6 text-primary" />
+        <div className="icon-tile-gradient rounded-xl p-3 transition-transform duration-300 group-hover:scale-110">
+          <Icon className="h-6 w-6 text-primary-foreground" />
         </div>
       </div>
     </div>

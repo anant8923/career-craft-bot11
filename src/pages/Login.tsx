@@ -203,13 +203,16 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-hero-bg relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
-        
+      <div className="hidden lg:flex lg:w-1/2 gradient-hero-animated-bg relative overflow-hidden">
+        <div className="absolute inset-0 hero-grid-pattern opacity-60" />
+        <div className="glow-orb bg-indigo-500 -top-20 -left-20 w-96 h-96" />
+        <div className="glow-orb bg-pink-500 bottom-0 right-0 w-[28rem] h-[28rem]" />
+        <div className="glow-orb bg-purple-500 top-1/3 right-10 w-64 h-64" />
+
         <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
           <div className="animate-fade-in">
             <div className="flex items-center gap-4 mb-8">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md ring-1 ring-white/30 shadow-[0_0_30px_rgba(255,255,255,0.25)]">
                 <Sparkles className="h-7 w-7 text-white" />
               </div>
               <div>
@@ -220,25 +223,27 @@ export default function Login() {
               </div>
             </div>
 
-            <h2 className="font-display text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
+            <h2 className="font-display text-4xl xl:text-5xl font-bold leading-tight mb-6 text-white">
               Discover Your
               <br />
-              <span className="text-white/90">Perfect Career Path</span>
+              <span className="gradient-text-hero">Perfect Career Path</span>
             </h2>
 
-            <p className="text-lg text-white/80 mb-8 max-w-md">
+            <p className="text-lg text-white/85 mb-8 max-w-md">
               Leverage AI-powered insights to explore career options, develop skills, and achieve your professional goals.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {features.map((feature, idx) => (
                 <div
                   key={feature}
-                  className="flex items-center gap-3 animate-slide-up opacity-0"
+                  className="flex items-center gap-3 animate-slide-up opacity-0 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2.5"
                   style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "forwards" }}
                 >
-                  <div className="h-2 w-2 rounded-full bg-white" />
-                  <span className="text-white/90">{feature}</span>
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-white/20">
+                    <Sparkles className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <span className="text-white/95 text-sm font-medium">{feature}</span>
                 </div>
               ))}
             </div>
@@ -267,9 +272,10 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="glass-card p-8">
-            <div className="text-center mb-8">
-              <h2 className="font-display text-2xl font-bold text-foreground">
+          <div className="glass-card gradient-border p-8 relative overflow-hidden">
+            <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+            <div className="text-center mb-8 relative">
+              <h2 className="font-display text-2xl font-bold gradient-text">
                 {isForgotPassword
                   ? "Reset your password"
                   : isSignUp
@@ -308,7 +314,7 @@ export default function Login() {
                   type="submit"
                   variant="gradient"
                   size="lg"
-                  className="w-full"
+                  className="w-full btn-glow"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -404,7 +410,7 @@ export default function Login() {
                     type="submit"
                     variant="gradient"
                     size="lg"
-                    className="w-full"
+                    className="w-full btn-glow"
                     disabled={isLoading}
                   >
                     {isLoading ? (

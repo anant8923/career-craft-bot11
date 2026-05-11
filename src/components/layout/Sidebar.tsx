@@ -163,12 +163,12 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
                   to={item.path}
                   onClick={handleNavClick}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200",
+                    "relative flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200",
                     isCollapsed ? "lg:justify-center lg:px-0 lg:py-3" : "lg:px-4 lg:py-3",
                     "px-3 py-2.5",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-soft"
-                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      ? "nav-active-gradient"
+                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:translate-x-0.5"
                   )}
                 >
                   <item.icon className={cn(
@@ -240,7 +240,7 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
             
             {/* Full user section - show on mobile always, desktop when expanded */}
             <div className={cn(
-              "flex items-center gap-2 lg:gap-3 rounded-xl bg-muted/50 p-2.5 lg:p-3",
+              "relative flex items-center gap-2 lg:gap-3 rounded-xl bg-card/60 backdrop-blur-md border border-border/60 p-2.5 lg:p-3 gradient-border overflow-hidden",
               isCollapsed && "lg:hidden"
             )}>
               <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">

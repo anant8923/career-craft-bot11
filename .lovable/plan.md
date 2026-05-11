@@ -1,102 +1,51 @@
 ## Goal
-Upgrade the landing page hero from "clean template" to a premium, AI-SaaS-grade experience by adding a dashboard mockup, stronger headline + CTA, glass card, dynamic background, trust row, and micro-interactions.
 
-## Files to change
+Extend the premium aesthetic from the landing hero to the rest of the app so the product feels cohesive: animated gradients, glassmorphism, glow accents, gradient text, subtle motion, and richer empty states. No business logic changes.
 
-1. **`src/index.css`** — add new tokens, animations, and utilities
-2. **`src/pages/Index.tsx`** — restructure hero into a 2-column premium layout
+## Scope (UI only)
 
-No new dependencies. No new files.
+1. **Login page (`src/pages/Login.tsx`)**
+   - Replace static `gradient-hero-bg` with the new `gradient-hero-animated-bg` and overlay `hero-grid-pattern`.
+   - Add 2–3 `glow-orb` accents (indigo / purple / pink) behind the branding column.
+   - Upgrade headline to use `gradient-text-hero` for the highlighted line; restyle features list with check icons inside small glass chips instead of plain dots.
+   - Right side: wrap form in a refined glass card with a soft gradient border, gradient text title, and a `btn-glow` primary submit button.
+   - Style inputs with focused gradient ring; demo button gets a subtle gradient outline.
 
----
+2. **Sidebar (`src/components/layout/Sidebar.tsx`)**
+   - Active nav item: switch from flat primary fill to `bg-gradient-primary` with `shadow-glow` and a left accent bar.
+   - Hover state: subtle gradient wash + icon scale.
+   - Logo block: keep gradient tile, add soft glow ring.
+   - User card: replace flat muted bg with `glass-card` style + gradient plan badge.
 
-## 1. `src/index.css` additions
+3. **Dashboard (`src/pages/Dashboard.tsx`)**
+   - Header: gradient-text accent on the user's name, add a faint glow orb behind the greeting.
+   - Metric cards (`MetricCard`): upgrade icon container to gradient tile with glow; animated count-up on mount; hover lift.
+   - "Top Skills", "Recent Activity", "Career Goals" sections: bump to `glass-card-hover`, gradient section titles, refined empty states (gradient icon halo).
+   - Goal cards: gradient border on hover, "Click to complete" becomes a small gradient pill.
 
-**Richer 3-color hero gradient** (replace current `--gradient-hero`):
-```
-linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%)
-```
-Plus an animated variant `--gradient-hero-animated` (200% size, shifting position) for a moving-gradient feel.
+4. **Shared primitives**
+   - `src/components/ui/card.tsx`: keep API, but add an optional `variant="glass"` class path for opt-in glass styling (does not affect existing usages).
+   - `src/components/ui/input.tsx`: refine focus ring to use a soft gradient shadow instead of the default 2px ring.
+   - `src/components/dashboard/MetricCard.tsx` and `SkillProgress.tsx`: align with new gradient/glow tokens.
 
-**New utilities & keyframes:**
-- `.hero-grid-pattern` — subtle white SVG grid overlay (replaces the dot pattern in hero)
-- `.glow-orb` — large blurred radial gradient orbs (purple/pink) for depth behind the card
-- `.animate-gradient-shift` — slowly animates background-position (15s)
-- `.animate-bounce-slow` — softer bounce for the scroll indicator
-- `.animate-float-slow` — 8s float for the dashboard mockup
-- `@keyframes gradientShift`, `bounceSoft`
-- `.btn-glow` — hover state: `scale(1.03)` + `box-shadow: 0 0 40px rgba(236,72,153,0.5)`
-- `.gradient-text-hero` — white→pink gradient clip for the second headline line
-
-## 2. `src/pages/Index.tsx` — new hero structure
-
-Replace the centered hero block with a **two-column responsive layout** (`lg:grid-cols-2`, stacks on mobile):
-
-**Left column (text + CTA):**
-- Pill badge (keep) — "AI-Powered Career Platform"
-- Headline (two lines, left-aligned on lg, centered on mobile):
-  - Line 1: `"AI-Powered Career Guidance"` — solid white, bold
-  - Line 2: `"Tailored Just for You"` — `gradient-text-hero` (white→pink)
-- Subhead: existing copy, slightly tightened
-- **Primary CTA:** `"Start Free Career Analysis"` with `btn-glow` (gradient bg, hover scale + glow)
-- **Trust row** under the CTA — three inline items with icons:
-  - `Zap` "AI Powered"
-  - `Target` "Personalized Results"
-  - `TrendingUp` "Career Growth"
-- Wrap everything in a **glassmorphism card**: `bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 lg:p-10 shadow-2xl`
-
-**Right column (visual storytelling — dashboard mockup):**
-A faux floating "Career Suggestions" UI built with divs (no images), wrapped in `animate-float-slow`:
-- Outer card: `glass-card` style with white/15 bg, white/30 border, rounded-3xl, shadow
-- Mock header row: avatar circle + "Your Career Match" title + small status dot
-- 3 mock suggestion rows, each with:
-  - Icon tile (gradient bg)
-  - Job title (e.g., "AI/ML Engineer", "Product Designer", "Data Scientist")
-  - Match % badge (e.g., "94% match") with mini progress bar
-- Bottom mini-chart: 4-5 vertical gradient bars of varying heights ("Skill Growth")
-- Two small floating accent cards behind it (sparkle badge "+12 new paths", trending badge "↑ 2.5x growth") with `animate-float` at staggered delays
-
-**Background layer (behind both columns):**
-- Replace dot pattern with `.hero-grid-pattern`
-- Add 2-3 `.glow-orb` divs (top-left purple, bottom-right pink, center-right indigo) with `animate-float`
-- Apply `gradient-hero-animated` + `animate-gradient-shift` to the section background
-
-**Scroll indicator:** keep, swap to `animate-bounce-slow` and add subtle "Scroll" text above it.
-
-## 3. CTA section (bottom of page)
-Update CTA button text to `"Get Your Career Plan"` and apply `btn-glow`. Headline stays.
-
-## 4. Features section
-No structural change. Add `btn-glow`-style hover via existing `glass-card-hover` (already good).
-
----
-
-## Visual reference
-
-```text
-┌────────────────────────────────────────────────────────────────┐
-│  animated 3-color gradient + grid + glowing orbs               │
-│                                                                │
-│  ┌──────────────────────────┐    ┌─────────────────────────┐   │
-│  │ ✦ AI-Powered Platform    │    │  ● Your Career Match    │   │
-│  │                          │    │  ┌───────────────────┐  │   │
-│  │ AI-Powered Career        │    │  │ ▣ AI/ML Engineer  │  │   │
-│  │   Guidance               │    │  │   ████████░ 94%   │  │   │
-│  │ Tailored Just for You    │    │  ├───────────────────┤  │   │
-│  │ (gradient line 2)        │    │  │ ▣ Product Designer│  │   │
-│  │                          │    │  │   ███████░░ 87%   │  │   │
-│  │ Subhead text...          │    │  ├───────────────────┤  │   │
-│  │                          │    │  │ ▣ Data Scientist  │  │   │
-│  │ [ Start Free Analysis → ]│    │  │   ██████░░░ 82%   │  │   │
-│  │                          │    │  └───────────────────┘  │   │
-│  │ ⚡ AI · 🎯 Personal · 📈  │    │  ▮▮▯▮▮ Skill Growth     │   │
-│  └──────────────────────────┘    └─────────────────────────┘   │
-│                                                                │
-│                       ⌄ Scroll                                 │
-└────────────────────────────────────────────────────────────────┘
-```
+5. **Tokens / CSS (`src/index.css`)**
+   - No new color palette — reuse existing `--gradient-primary`, `--gradient-hero-animated`, `--shadow-glow`, `glow-orb`, `btn-glow`, `hero-grid-pattern` introduced for the landing page.
+   - Add small helpers if needed: `.gradient-border` (mask-based 1px gradient border) and `.icon-tile-gradient` for reusable gradient icon containers.
 
 ## Out of scope
-- New images/illustrations (mockup is pure CSS/divs)
-- Changes to features section content, login flow, or any other page
-- New libraries (no framer-motion, no particle libs)
+
+- No changes to auth flow, Supabase queries, routing, or data shapes.
+- Other feature pages (CareerAdvice, SkillAssessment, ResumeBuilder, InterviewPrep, CareerRoadmap, SalaryInsights, SavedCareers, Subscription) are **not** touched in this pass — we can do a follow-up round once these four anchor screens are approved, to avoid one giant change.
+
+## Technical notes
+
+- All colors via existing HSL semantic tokens / gradient vars in `index.css`. No hardcoded hex in components.
+- Animations reuse `animate-fade-in`, `animate-slide-up`, `animate-float`, `animate-bounce-slow` already defined.
+- Dark mode: verified tokens already exist; glass + gradient styles use translucent layers that work in both themes.
+- Accessibility: keep focus-visible rings, preserve semantic labels, maintain color contrast on gradient backgrounds (text stays white/foreground over gradients).
+
+## Deliverables
+
+Edits to: `Login.tsx`, `Sidebar.tsx`, `Dashboard.tsx`, `MetricCard.tsx`, `SkillProgress.tsx`, `card.tsx`, `input.tsx`, `index.css`. No new dependencies.
+
+After approval, would you like me to also extend this to the feature pages (Career Advice, Skill Assessment, Resume Builder, etc.) in a follow-up?
