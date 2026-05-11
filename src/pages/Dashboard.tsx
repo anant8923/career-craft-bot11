@@ -443,7 +443,7 @@ export default function Dashboard() {
             {goals.map((goal) => (
               <div
                 key={goal.id}
-                className="rounded-xl border border-border bg-muted/30 p-4 hover:border-primary/30 transition-colors cursor-pointer"
+                className="rounded-xl border border-border bg-muted/30 p-4 hover:border-primary/50 hover:shadow-soft hover:-translate-y-0.5 transition-all cursor-pointer"
                 onClick={() => handleCompleteGoal(goal.id)}
               >
                 <div className="flex items-start gap-3">
