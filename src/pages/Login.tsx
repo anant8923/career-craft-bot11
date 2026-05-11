@@ -272,9 +272,10 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="glass-card p-8">
-            <div className="text-center mb-8">
-              <h2 className="font-display text-2xl font-bold text-foreground">
+          <div className="glass-card gradient-border p-8 relative overflow-hidden">
+            <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+            <div className="text-center mb-8 relative">
+              <h2 className="font-display text-2xl font-bold gradient-text">
                 {isForgotPassword
                   ? "Reset your password"
                   : isSignUp
