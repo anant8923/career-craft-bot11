@@ -74,13 +74,13 @@ export function ChatBot() {
   };
 
   return (
-    <div className="glass-card p-6 animate-slide-up opacity-0 animation-delay-500" style={{ animationFillMode: "forwards" }}>
+    <div className="glass-card-hover p-6 animate-slide-up opacity-0 animation-delay-500" style={{ animationFillMode: "forwards" }}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="rounded-lg bg-primary/10 p-2">
-            <Bot className="h-5 w-5 text-primary" />
+          <div className="icon-tile-gradient rounded-xl p-2">
+            <Bot className="h-5 w-5 text-primary-foreground" />
           </div>
-          <h2 className="font-display text-lg font-semibold text-foreground">
+          <h2 className="font-display text-lg font-semibold gradient-text">
             Career Assistant
           </h2>
         </div>
