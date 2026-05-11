@@ -322,7 +322,7 @@ export default function Dashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Skills overview */}
         <div
-          className="glass-card p-6 lg:col-span-2 animate-slide-up opacity-0 animation-delay-200"
+          className="glass-card-hover p-6 lg:col-span-2 animate-slide-up opacity-0 animation-delay-200"
           style={{ animationFillMode: "forwards" }}
         >
           <div className="flex items-center justify-between mb-6">
@@ -357,7 +357,7 @@ export default function Dashboard() {
 
         {/* Recent activity */}
         <div
-          className="glass-card p-6 animate-slide-up opacity-0 animation-delay-300"
+          className="glass-card-hover p-6 animate-slide-up opacity-0 animation-delay-300"
           style={{ animationFillMode: "forwards" }}
         >
           <h2 className="font-display text-lg font-semibold text-foreground mb-6">
@@ -397,7 +397,7 @@ export default function Dashboard() {
 
       {/* Goals section */}
       <div
-        className="glass-card p-6 animate-slide-up opacity-0 animation-delay-400"
+        className="glass-card-hover p-6 animate-slide-up opacity-0 animation-delay-400"
         style={{ animationFillMode: "forwards" }}
       >
         <div className="flex items-center justify-between mb-6">
