@@ -227,6 +227,40 @@
   .plan-badge-pro {
     @apply plan-badge bg-amber-500 text-white;
   }
+
+  .icon-tile-gradient {
+    background: var(--gradient-primary);
+    box-shadow: 0 8px 24px -8px hsla(245 75% 60% / 0.55);
+  }
+
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--gradient-hero-animated);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .nav-active-gradient {
+    background: var(--gradient-primary);
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 8px 24px -10px hsla(245 75% 60% / 0.6), var(--shadow-glow);
+  }
+
+  .input-glow:focus-visible {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px hsla(245 75% 60% / 0.35), 0 6px 20px -8px hsla(280 60% 55% / 0.45);
+  }
 }
 
 @layer utilities {
