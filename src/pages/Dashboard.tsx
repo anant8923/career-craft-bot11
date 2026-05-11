@@ -268,11 +268,15 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative">
+      {/* Decorative orbs */}
+      <div className="glow-orb bg-primary/40 -top-20 -left-10 w-72 h-72 -z-10" />
+      <div className="glow-orb bg-secondary/30 top-40 right-0 w-80 h-80 -z-10" />
+
       {/* Header */}
-      <div className="animate-fade-in">
+      <div className="animate-fade-in relative">
         <h1 className="font-display text-3xl font-bold text-foreground">
-          Welcome back, {profileName}! 👋
+          Welcome back, <span className="gradient-text">{profileName}</span>! 👋
         </h1>
         <p className="mt-2 text-muted-foreground">
           Here's an overview of your career journey progress
